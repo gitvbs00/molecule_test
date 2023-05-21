@@ -1,0 +1,41 @@
+
+[
+    {
+      "id": "redeploy-webhook",
+      "execute-command": "/home/vsaintloui/valmy/repo/script/webhook_handler.py",
+      "command-working-directory": "/home/vsaintloui/valmy/repo/webhook",
+      "pass-arguments-to-command":
+      [
+        {
+          "source": "entire-payload",
+          "name"  : ""
+        }
+      ],
+      "trigger-rule":{
+        "and": [
+          {
+            "match":{
+              "type": "payload-hmac-sha256",
+              "secret": "secret",
+              "parameter":{
+                "source": "header",
+                "name": "X-Gitea-Signature"
+              }
+            }
+          },
+          {
+            "not": {
+              "match": {
+                "type": "value",
+                "value": "vsaintlouis",
+                "parameter": {
+                  "source": "payload",
+                  "name": "head_commit.author.name"
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+]
